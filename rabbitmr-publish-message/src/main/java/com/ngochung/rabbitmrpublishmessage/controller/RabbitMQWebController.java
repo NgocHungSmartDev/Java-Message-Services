@@ -1,27 +1,26 @@
 package com.ngochung.rabbitmrpublishmessage.controller;
 
-import com.ngochung.rabbitmrpublishmessage.model.Employee;
-import com.ngochung.rabbitmrpublishmessage.service.RabbitMQSender;
+import com.ngochung.rabbitmrpublishmessage.config.RabbitMQConfig;
+import com.ngochung.rabbitmrpublishmessage.model.CustomMessage;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/rabbitmq/")
 public class RabbitMQWebController {
     @Autowired
-    private RabbitMQSender rabbitMQSender;
+    private RabbitTemplate template;
 
-    @GetMapping(value = "/producer")
-    public String producer(@RequestParam("empName") String empName, @RequestParam("empId") String empId) {
+    @PostMapping("/publish")
+    public String publishMessage(@RequestBody CustomMessage message) {
+        message.setMessageId(UUID.randomUUID().toString());
+        message.setMessageDate(new Date());
+        template.convertAndSend(RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.ROUTING_KEY, message);
 
-        Employee emp=new Employee();
-        emp.setEmpId(empId);
-        emp.setEmpName(empName);
-        rabbitMQSender.send(emp);
-
-        return "Message sent to the RabbitMQ JavaInUse Successfully";
+        return "Message Published";
     }
 }

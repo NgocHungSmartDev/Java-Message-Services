@@ -12,3 +12,9 @@
 * Spring Boot + RabbitMQ Tutorial - Retry and Error Handling Example
 * Spring Cloud Stream - RabbitMQ Publish Message Example
 * Spring Cloud Stream - RabbitMQ Consume Message Example
+
+
+##Test cases
+
+### test case 1: http://localhost:8081/rabbitmq/producer?empName=emp1&empId=emp001
+	

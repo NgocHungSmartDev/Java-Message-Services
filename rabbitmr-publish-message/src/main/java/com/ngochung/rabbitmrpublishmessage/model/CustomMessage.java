@@ -1,15 +1,18 @@
 package com.ngochung.rabbitmrpublishmessage.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.Date;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee {
-    private String empName;
-    private String empId;
+@ToString
+public class CustomMessage {
+    private String messageId;
+    private String message;
+    private Date messageDate;
 }

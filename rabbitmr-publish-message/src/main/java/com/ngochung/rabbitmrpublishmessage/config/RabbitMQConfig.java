@@ -11,40 +11,37 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    @Value("${ngochung.rabbitmq.queue}")
-    String queueName;
-
-    @Value("${ngochung.rabbitmq.exchange}")
-    String exchange;
-
-    @Value("${ngochung.rabbitmq.routingkey}")
-    private String routingkey;
+    public static final String QUEUE = "message_queue";
+    public static final String EXCHANGE = "message_exchange";
+    public static final String ROUTING_KEY = "message_routingKey";
 
     @Bean
-    Queue queue() {
-        return new Queue(queueName, false);
+    public Queue queue() {
+        return  new Queue(QUEUE);
     }
 
     @Bean
-    DirectExchange exchange() {
-        return new DirectExchange(exchange);
+    public TopicExchange exchange() {
+        return new TopicExchange(EXCHANGE);
     }
 
     @Bean
-    Binding binding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(routingkey);
+    public Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder
+                .bind(queue)
+                .to(exchange)
+                .with(ROUTING_KEY);
     }
 
     @Bean
-    public MessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public MessageConverter messageConverter() {
+        return  new Jackson2JsonMessageConverter();
     }
 
-
     @Bean
-    public AmqpTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(jsonMessageConverter());
-        return rabbitTemplate;
+    public AmqpTemplate template(ConnectionFactory connectionFactory) {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        template.setMessageConverter(messageConverter());
+        return  template;
     }
 }
